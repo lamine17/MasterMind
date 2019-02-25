@@ -150,17 +150,6 @@
         (recur (rest v)))
       true)))
 
-        
-  
-(require '[clojure.string :as str])
-
-    
-
-                  
-
-    
-
-
 (defn prendre-n [v n]
   (loop[v v
         n n
@@ -179,15 +168,6 @@
         (recur (rest ind) (+ v 1) l))
       l)))
       
-
-
-(defn couleurs-localisation1 [reponse]
-  (loop [couleurs [:rouge :bleu :vert :jaune :noir :blanc]
-         e (assoc {} :rouge 0 :bleu 0 :vert 0 :jaune 0 :noir 0 :blanc 0)]
-    (let [ ind (filtre-indications reponse (take TAILLE (repeat (first couleurs))) (indications reponse (take TAILLE (repeat (first couleurs)))))]
-      (if(> (count couleurs) 0)
-        (recur (rest couleurs) (assoc e (first couleurs) (essaie ind)))
-        e))))
 
 (defn rat [v l c]
   (loop[l l
@@ -220,7 +200,7 @@
    (let [ ind (filtre-indications mastercode v (indications mastercode v))]
     (if(gagner? ind)
       (gagner v))
-    ind)))
+    (vec ind))))
   
    
 (defn couleurs-localisation []
