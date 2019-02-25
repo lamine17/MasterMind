@@ -1,14 +1,7 @@
-;; # Exercice 6 : Mastermind
-
 (ns theme01-clojure.mastermind.mastermind
   (:use midje.sweet))
 
 
-
-
-;; ## Question 1 : tirage du code secret
-
-(declare code-secret)
 
 (defn code-secret [n]
   (loop [s []]
@@ -30,10 +23,6 @@
          0)
       => true)
 
-
-;; ## Question 2 : indications
-
-(declare indications)
 
 (defn indications [ code prop]
   (let [ens (into #{} code)]
@@ -69,9 +58,7 @@
                    [:vert :bleu :rouge :jaune])
       => [:color :bad :color :bad])
 
-;; ## Question 3 : fréquences
 
-(declare frequences)
 
 (defn frequences  [v]
   (loop [m {}
@@ -94,9 +81,6 @@
       
       (frequences [1 2 3 2 1 4]) => {1 2, 2 2, 3 1, 4 1})
 
-;; ## Question 4 : fréquences disponibles
-
-(declare freqs-dispo)
 
 (defn freqs-dispo1 [r p]
   (loop[fr (frequences r)
@@ -114,9 +98,6 @@
                    [:good :color :bad :good :color])
       => {:bleu 1, :rouge 2, :vert 0})
 
-;; ## Question 5 : filtrer par cadinalité (+ difficile)
-
-(declare filtre-indications)
 
 (defn filtre-indications [v1 v2 v3]
   (loop[fr (frequences v1)
@@ -149,8 +130,6 @@
       => [:good :color :color :bad])
       
 
-;; ## Questions subsidiaire
-
 
 ;; La variable globale TAILLE a pour role que d'indiquer la taille du mastermind
 
@@ -175,47 +154,12 @@
   
 (require '[clojure.string :as str])
 
-(defn convert-input []
-  (loop [l (str/split (read-line) #" ")
-         r []]
-    (if(> (count l) 0)
-      (if(not= (compare (first l) "rouge") 0)
-        (if(not= (compare (first l) "bleu") 0)
-          (if(not= (compare (first l) "vert") 0)
-            (if(not= (compare (first l) "jaune") 0)
-              (if(not= (compare (first l) "noir") 0)
-                (if(not= (compare (first l) "blanc") 0)
-                  r
-                  (recur (rest l) (conj r :blanc)))
-                (recur (rest l) (conj r :noir)))
-              (recur (rest l) (conj r :jaune)))
-            (recur (rest l) (conj r :vert)))
-          (recur (rest l) (conj r :bleu)))
-        (recur (rest l) (conj r :rouge)))
-      r)))
     
-
-(defn taper  []
-  (loop [l (convert-input)
-         i nil]
-    (if(not= (count l) TAILLE)
-      (recur (convert-input) (println "\nErreur dans le typage. Veuillez reessayer.\n"))
-      l)))
 
                   
 
     
 
-
-(defn mastermind_texte []
-   (let [reponse (code-secret TAILLE)
-         v (presentation)]
-     (loop [proposition  (taper)]
-       (let [ ind (filtre-indications reponse proposition (indications reponse proposition))]
-         (println ind  "\n")
-         (if(not (gagner? ind))
-           (recur (taper))
-           (gagner proposition))))))
 
 (defn prendre-n [v n]
   (loop[v v
@@ -268,7 +212,7 @@
             
 (defn definir_mastermind 
   ([] (definir_mastermind (code-secret TAILLE)))
-  ([code]  (def mastercode code)))
+  ([code] (presentation) (def mastercode code)))
 
 (defn mastermind 
   ([c1 c2 c3 c4 c5] (mastermind (vec [c1 c2 c3 c4 c5])))
@@ -291,3 +235,31 @@
 
 (defn solver []
   (let [ l (println "La bonne reponse est:")] (cle-valeur (couleurs-localisation))))
+
+
+(fact "Le mastermind fonctionne correctement."
+      (definir_mastermind [:blanc :rouge :vert :rouge :bleu])
+      
+      (mastermind [:blanc :noir :vert :rouge :bleu])
+      => [:good :bad :good :good :good]
+  
+      (mastermind [:blanc :vert :rouge :rouge :bleu])
+      => [:good :color :color :good :good]
+  
+      (mastermind [:blanc :rouge :vert :rouge :bleu])
+      => [:good :good :good :good :good]
+  
+
+
+  
+  
+  (fact "Le solveur du mastermind fonctionne correctement."
+      (definir_mastermind [:noir :rouge :vert :rouge :bleu])
+      
+      (solver)
+      => [:noir :rouge :vert :rouge :bleu]))
+      
+  
+  
+
+      
