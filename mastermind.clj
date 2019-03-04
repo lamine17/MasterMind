@@ -165,6 +165,16 @@
         (recur (rest v)))
       true)))
 
+(fact "La fonction gagner? semble fonctionner correctement."
+  (gagner? [:good :good :good :good])
+  => true
+  
+  (gagner? [:good :good :good :bad])
+  => false
+  
+  (gagner? [:color :color :good :bad])
+  => false)
+
 ;; La fonction essaie renvoie un vecteur contennant l'indice 
 ;; des :good contenue dans un vecteur.
 
@@ -177,9 +187,23 @@
         (recur (rest ind) (+ v 1) (conj l v))
         (recur (rest ind) (+ v 1) l))
       l)))
+
+(fact "La fonction essaie semble fonctionner correctement."
+  (essaie [:good :good :good :good])
+  => [0 1 2 3]
+  
+  (essaie [:good :bad :good :bad])
+  => [0 2]
+  
+  (essaie [:good :color :bad :bad])
+  => [0]
+  
+  (essaie [:bad :color :bad :bad])
+  => [])
       
-;; La fonction rat retourne un vecteur r
-;; contenant a chaque indice passé dans un 
+;; La fonction rat retourne un vecteur r formé
+;; depuis un vecteur passé en parametre v qui
+;; contient a chaque indice passé dans un 
 ;; tableau l la valeur c.
 
 (defn rat [v l c]
@@ -188,6 +212,16 @@
     (if(seq l)
       (recur (rest l) (assoc r (first l) c))
       r)))
+
+(fact "La fonction rat semble fonctionner correctement."
+  (rat [:rouge :rouge :rouge :rouge :rouge] [0 1 3] :vert)
+  => [:vert :vert :rouge :vert :rouge]
+  
+  (rat [:rouge :rouge :rouge :rouge :rouge] [] :vert)
+  => [:rouge :rouge :rouge :rouge :rouge]
+  
+  (rat [:rouge :rouge :rouge :good :good] [0 1 2] :vert)
+  => [:vert :vert :vert :good :good])
 
 ;; La fonction pvector retourne un vecteur 
 ;; de taille i contenant uniquement des elements
@@ -199,12 +233,22 @@
       (recur (conj v c))
       v)))
 
+(fact "La fonction pvector semble fonctionner correctement."
+  (pvector :vert 0 )
+  => []
+  
+  (pvector :rouge 3)
+  => [:rouge :rouge :rouge]
+  
+  (pvector :jaune 7)
+  => [:jaune :jaune :jaune :jaune :jaune :jaune :jaune]
+)
+
 ;; La fonction cle-valeur effectue une conversion cle-valeur <-> vecteur
 ;; c'est a dire que chaque indices de ce vecteur est initialisé a la valeur indiqué par la clé
 ;; de même valeur dans l"ensemble m passé en parametre ces indices etant les valeurs contenue
-;; dans le tableau poité par cette clé.
-
-;; exemple: {:rouge [1 2], :vert [0] } -> [:vert :rouge :rouge]
+;; dans le tableau pointé par cette clé.
+;; Le vecteur renvoyé est de taille TAILLE, les vides etant remplacé par  :null.
 
 (defn cle-valeur [m]
   (loop[m m
@@ -212,6 +256,17 @@
     (if(seq m)
       (recur (rest m) (rat r (last (first m)) (first (first m))))
       r)))
+
+(fact "La fonction cle-valeur semble fonctionner correctement."
+  (cle-valeur {:rouge [1 2], :vert [0] })
+  => [:vert :rouge :rouge :null :null]
+  
+  (cle-valeur {})
+  => [:null :null :null :null :null]
+  
+  (cle-valeur {:jaune [4] :rouge [1] :noir [2] :blanc [0] :bleu [3]})
+  => [:blanc :rouge :noir :bleu :jaune])
+
        
 ;; La fonction mastermind est la fonction principal du mastermind.
 ;; Elle permet au joueur de passer en parametre la combinaison qu'il souhaite proposer.
@@ -235,10 +290,19 @@
         (recur (rest couleurs) (assoc e (first couleurs) (essaie ind)))
         (assoc e (first couleurs) (essaie ind))))))
 
+
+(fact "La fonction couleurs-localisation semble fonctionner correctement."
+  (definir_mastermind [:noir :rouge :vert :rouge :bleu])
+  
+  (couleurs-localisation)
+  => {:rouge [1 3], :bleu [4], :vert [2], :jaune [], :noir [0], :blanc []}
+  
+  )
+
 ;; Le solver renvoie la bonne combinaison et permet de resoudre le mastermind.
 
 (defn solver []
-  (let [ l (println "La bonne reponse est:")] (cle-valeur (couleurs-localisation))))
+  (do (println "La bonne reponse est:") (cle-valeur (couleurs-localisation))))
 
 
 (fact "Le mastermind fonctionne correctement."
